@@ -48,6 +48,6 @@ char **to_array(dictionary *);
 
 void print_dict(dictionary *);
 
-static unsigned int hash(const char *key);
+static unsigned int hash(const char *);
 
 #endif

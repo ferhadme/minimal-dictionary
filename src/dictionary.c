@@ -35,6 +35,13 @@ bool put(dictionary *dict, const char *key, const char *data)
 
 char *get(dictionary *dict, const char *key)
 {
+    unsigned int index = hash(key);
+    node *head = dict->table[index];
+    while (head != NULL) {
+        if (strcmp(head->key, key) == 0)
+            return head->data;
+        head = head->next;
+    }
     return NULL;
 }
 
@@ -60,7 +67,8 @@ bool contains_value(dictionary *dict, const char *value)
 
 char *get_or_default(dictionary *dict, const char *key, const char *default_val)
 {
-    return NULL;
+    char *data = get(dict, key);
+    return data == NULL ? default_val : data;
 }
 
 char *replace_if_exists(dictionary *dict, const char *new_value)

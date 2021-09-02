@@ -11,6 +11,11 @@ int main(void)
     put(dict, "Japan", "Tokyo");
     put(dict, "Canada", "Ottawa");
     print_dict(dict);
+
+    printf("%s\n", get(dict, "Japan"));
+    printf("%s\n", get_or_default(dict, "Germany", "Berlin"));
+
+    
     
     return 0;
 }
