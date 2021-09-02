@@ -36,14 +36,8 @@ bool put(dictionary *dict, const char *key, const char *data)
 
 char *get(dictionary *dict, const char *key)
 {
-    unsigned int index = hash(key);
-    node *head = dict->table[index];
-    while (head) {
-        if (strcmp(head->key, key) == 0)
-            return head->data;
-        head = head->next;
-    }
-    return NULL;
+    node *n = find_node(dict, key);
+    return n ? n->data : NULL;
 }
 
 bool delete(dictionary *dict, const char *key)
@@ -76,8 +70,23 @@ bool delete(dictionary *dict, const char *key)
         clean_node_from_mem(target);
         dict->table[index] = walker;
     }
-
+    dict->size--;
+    
     return true;
+}
+
+static node *find_node(dictionary *dict, const char *key)
+{
+    unsigned int index = hash(key);
+    node *head = dict->table[index];
+
+    while (head) {
+        if (strcmp(head->key, key))
+            return head;
+        head = head->next;
+    }
+
+    return head;
 }
 
 void clean_node_from_mem(node *n)
@@ -89,6 +98,7 @@ void clean_node_from_mem(node *n)
 
 void clear(dictionary *dict)
 {
+    
     return;
 }
 

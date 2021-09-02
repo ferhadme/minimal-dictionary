@@ -50,6 +50,8 @@ char **to_array(dictionary *);
 
 void print_dict(dictionary *);
 
+static node *find_node(dictionary *, const char *);
+
 static unsigned int hash(const char *);
 
 #endif
