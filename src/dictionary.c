@@ -15,6 +15,8 @@ dictionary *create_dictionary()
 
 bool put(dictionary *dict, const char *key, const char *data)
 {
+    if (contains_key(dict, key))
+        return true;
     unsigned int index = hash(key);
     node *head = dict->table[index];
 
@@ -57,18 +59,27 @@ void clear(dictionary *dict)
 
 bool contains_key(dictionary *dict, const char *key)
 {
-    return false;
+    char *data = get(dict, key);
+    return data == NULL ? false : true;
 }
 
 bool contains_value(dictionary *dict, const char *value)
 {
+    for (int i = 0; i < BUCKET_SIZE; i++) {
+        node *head = dict->table[i];
+        while (head != NULL) {
+            if (strcmp(head->data, value) == 0)
+                return true;
+            head = head->next;
+        }
+    }
     return false;
 }
 
 char *get_or_default(dictionary *dict, const char *key, const char *default_val)
 {
     char *data = get(dict, key);
-    return data == NULL ? default_val : data;
+    return data == NULL ? (char *) default_val : data;
 }
 
 char *replace_if_exists(dictionary *dict, const char *new_value)

@@ -15,7 +15,10 @@ int main(void)
     printf("%s\n", get(dict, "Japan"));
     printf("%s\n", get_or_default(dict, "Germany", "Berlin"));
 
+    printf("contains_value? %i\n", contains_value(dict, "Baki"));
+    printf("contains_value? %i\n", contains_value(dict, "Bak"));
     
+    free(dict);
     
     return 0;
 }
