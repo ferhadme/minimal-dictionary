@@ -1,11 +1,36 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 
 #include "dictionary.h"
 
+dictionary *create_dictionary()
+{
+    dictionary *dict = malloc(sizeof(dictionary));
+    dict->size = 0;
+    return dict;
+    return NULL;
+}
+
 bool put(dictionary *dict, const char *key, const char *data)
 {
-    return false;
+    unsigned int index = hash(key);
+    node *head = dict->table[index];
+
+    node *new_node = malloc(sizeof(node));
+    new_node->key = malloc(strlen(key));
+    new_node->data = malloc(strlen(data));
+    if (new_node->key == NULL || new_node->data == NULL)
+        return false;
+
+    strcpy(new_node->key, key);
+    strcpy(new_node->data, data);
+
+    new_node->next = head;
+    dict->table[index] = new_node;
+    dict->size++;
+    return true;
 }
 
 char *get(dictionary *dict, const char *key)
@@ -48,9 +73,27 @@ bool replace(dictionary *dict, const char *old_value, const char *new_value)
     return false;
 }
 
+bool empty(dictionary *dict)
+{
+    return dict->size == 0;
+}
+
 char **to_array(dictionary *dict)
 {
     return NULL;
+}
+
+void print_dict(dictionary *dict)
+{
+    printf("{\n");
+    for (int i = 0; i < BUCKET_SIZE; i++) {
+        node *head = dict->table[i];
+        while (head != NULL) {
+            printf("\t\"%s\": %s\n", head->key, head->data);
+            head = head->next;
+        }
+    }
+    printf("}\n");
 }
 
 /*

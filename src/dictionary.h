@@ -5,6 +5,7 @@
 
 typedef struct node
 {
+    char *key;
     char *data;
     struct node *next;
 } node;
@@ -20,6 +21,8 @@ typedef struct
     node *table[BUCKET_SIZE];
     unsigned int size;
 } dictionary;
+
+dictionary *create_dictionary();
 
 bool put(dictionary *, const char *, const char *);
 
@@ -39,7 +42,11 @@ char *replace_if_exists(dictionary *, const char *);
 
 bool replace(dictionary *, const char *, const char *);
 
+bool empty(dictionary *);
+
 char **to_array(dictionary *);
+
+void print_dict(dictionary *);
 
 static unsigned int hash(const char *key);
 
