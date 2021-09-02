@@ -10,7 +10,6 @@ dictionary *create_dictionary()
     dictionary *dict = malloc(sizeof(dictionary));
     dict->size = 0;
     return dict;
-    return NULL;
 }
 
 bool put(dictionary *dict, const char *key, const char *data)
@@ -23,7 +22,7 @@ bool put(dictionary *dict, const char *key, const char *data)
     node *new_node = malloc(sizeof(node));
     new_node->key = malloc(strlen(key));
     new_node->data = malloc(strlen(data));
-    if (new_node->key == NULL || new_node->data == NULL)
+    if (!new_node->key || !new_node->data)
         return false;
 
     strcpy(new_node->key, key);
@@ -39,7 +38,7 @@ char *get(dictionary *dict, const char *key)
 {
     unsigned int index = hash(key);
     node *head = dict->table[index];
-    while (head != NULL) {
+    while (head) {
         if (strcmp(head->key, key) == 0)
             return head->data;
         head = head->next;
@@ -49,7 +48,43 @@ char *get(dictionary *dict, const char *key)
 
 bool delete(dictionary *dict, const char *key)
 {
-    return false;
+    unsigned int index = hash(key);
+    node *walker = dict->table[index];
+    node *target = NULL;
+    node *prev = NULL;
+
+    while (walker) {
+        if (strcmp(walker->key, key) == 0) {
+            target = walker;
+            break;
+        }
+        prev = walker;
+        walker = walker->next;
+    }
+
+    if (!target)
+        return false;
+    
+    // target - ...
+    // ... - target - ...
+    // ... - target
+    walker = target->next;
+    if (prev) {
+        clean_node_from_mem(target);
+        prev->next = walker;
+    } else {
+        clean_node_from_mem(target);
+        dict->table[index] = walker;
+    }
+
+    return true;
+}
+
+void clean_node_from_mem(node *n)
+{
+    free(n->key);
+    free(n->data);
+    free(n);
 }
 
 void clear(dictionary *dict)
@@ -60,14 +95,14 @@ void clear(dictionary *dict)
 bool contains_key(dictionary *dict, const char *key)
 {
     char *data = get(dict, key);
-    return data == NULL ? false : true;
+    return !data ? false : true;
 }
 
 bool contains_value(dictionary *dict, const char *value)
 {
     for (int i = 0; i < BUCKET_SIZE; i++) {
         node *head = dict->table[i];
-        while (head != NULL) {
+        while (!head) {
             if (strcmp(head->data, value) == 0)
                 return true;
             head = head->next;
@@ -79,7 +114,7 @@ bool contains_value(dictionary *dict, const char *value)
 char *get_or_default(dictionary *dict, const char *key, const char *default_val)
 {
     char *data = get(dict, key);
-    return data == NULL ? (char *) default_val : data;
+    return !data ? (char *) default_val : data;
 }
 
 char *replace_if_exists(dictionary *dict, const char *new_value)
@@ -107,7 +142,7 @@ void print_dict(dictionary *dict)
     printf("{\n");
     for (int i = 0; i < BUCKET_SIZE; i++) {
         node *head = dict->table[i];
-        while (head != NULL) {
+        while (head) {
             printf("\t\"%s\": %s\n", head->key, head->data);
             head = head->next;
         }

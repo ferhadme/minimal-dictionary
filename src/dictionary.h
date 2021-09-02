@@ -30,6 +30,8 @@ char *get(dictionary *, const char *);
 
 bool delete(dictionary *, const char *);
 
+void clean_node_from_mem(node *);
+
 void clear(dictionary *);
 
 bool contains_key(dictionary *, const char *);
