@@ -5,13 +5,28 @@
 
 #include "dictionary.h"
 
+/*
+ * Creates new dictionary
+ * Can return NULL in case of memory allocation problem
+ */
 dictionary *create_dictionary()
 {
     dictionary *dict = malloc(sizeof(dictionary));
+    if (!dict)
+        return NULL;
+    
+    for (int i = 0; i < BUCKET_SIZE; i++)
+        dict->table[i] = NULL;
+    
     dict->size = 0;
     return dict;
 }
 
+/*
+ * Puts value with specified key into dictionary
+ * Key duplications are ignored
+ * Returns true if put is successful, otherwise (memory allocation problem) false
+ */
 bool put(dictionary *dict, const char *key, const char *data)
 {
     if (contains_key(dict, key))
@@ -20,8 +35,10 @@ bool put(dictionary *dict, const char *key, const char *data)
     node *head = dict->table[index];
 
     node *new_node = malloc(sizeof(node));
-    new_node->key = malloc(strlen(key));
-    new_node->data = malloc(strlen(data));
+    if (!new_node)
+        return false;
+    new_node->key = malloc(strlen(key) + 1);
+    new_node->data = malloc(strlen(data) + 1);
     if (!new_node->key || !new_node->data)
         return false;
 
@@ -34,12 +51,20 @@ bool put(dictionary *dict, const char *key, const char *data)
     return true;
 }
 
+/*
+ * Gets value from dictionary with specified key
+ * Returns NULL if there is no such key in dictionary
+ */
 char *get(dictionary *dict, const char *key)
 {
     node *n = find_node(dict, key);
     return n ? n->data : NULL;
 }
 
+/*
+ * Deletes value from dictionary with specified key
+ * Returns true if deletion is successful, otherwise (no such key) false
+ */
 bool delete(dictionary *dict, const char *key)
 {
     unsigned int index = hash(key);
@@ -75,78 +100,125 @@ bool delete(dictionary *dict, const char *key)
     return true;
 }
 
+/*
+ * Finds node in dictionary with specified key
+ */
 static node *find_node(dictionary *dict, const char *key)
 {
     unsigned int index = hash(key);
     node *head = dict->table[index];
 
     while (head) {
-        if (strcmp(head->key, key))
+        if (strcmp(head->key, key) == 0)
             return head;
         head = head->next;
     }
-
+    
     return head;
 }
 
-void clean_node_from_mem(node *n)
+/*
+ * Finds node in dictionary with specified value
+ */
+static node *find_node_v(dictionary *dict, const char *value)
+{
+    
+    for (int i = 0; i < BUCKET_SIZE; i++) {
+        node *head = dict->table[i];
+        while (head) {
+            if (strcmp(head->data, value) == 0)
+                return head;
+            head = head->next;
+        }
+    }
+
+    return NULL;
+}
+
+/*
+ * Clean node related data from memory
+ */
+static void clean_node_from_mem(node *n)
 {
     free(n->key);
     free(n->data);
     free(n);
 }
 
+/*
+ * Deletes all data from dictionary and memory
+ */
 void clear(dictionary *dict)
 {
-    
-    return;
+    for (int i = 0; i < BUCKET_SIZE; i++) {
+        node *head = dict->table[i];
+        while (head) {
+            node *tmp = head;
+            head = head->next;
+            free(tmp->key);
+            free(tmp->data);
+            free(tmp);
+        }
+        dict->table[i] = NULL;
+    }
+    dict->size = 0;
 }
 
+/*
+ * Checks whether dictionary contains specified key
+ */
 bool contains_key(dictionary *dict, const char *key)
 {
     char *data = get(dict, key);
     return !data ? false : true;
 }
 
+/*
+ * Checks whether dictionary contains at least one specified value (the same values can be stored with different keys)
+ */
 bool contains_value(dictionary *dict, const char *value)
 {
-    for (int i = 0; i < BUCKET_SIZE; i++) {
-        node *head = dict->table[i];
-        while (!head) {
-            if (strcmp(head->data, value) == 0)
-                return true;
-            head = head->next;
-        }
-    }
-    return false;
+    node *n = find_node_v(dict, value);
+    return n ? true : false;
 }
 
+/*
+ * Gets value from dictionary with specified key
+ * Returns default_val if there is no such key in dictionary
+ */
 char *get_or_default(dictionary *dict, const char *key, const char *default_val)
 {
     char *data = get(dict, key);
     return !data ? (char *) default_val : data;
 }
 
-char *replace_if_exists(dictionary *dict, const char *new_value)
+/* 
+ * Sets or replaces old value (paired with key) with new value
+ * Returns old value if key is available, otherwise NULL
+ */
+char* replace(dictionary *dict, const char *key, const char *new_value)
 {
-    return NULL;
+    node *n = find_node(dict, key);
+    if (!n)
+        return NULL;
+    
+    n->data = realloc(n->data, strlen(new_value) + 1);
+    strcpy(n->data, new_value);
+    
+    return n->key;
 }
 
-bool replace(dictionary *dict, const char *old_value, const char *new_value)
-{
-    return false;
-}
-
+/*
+ * Checks whether dictionary is empty or not
+ */
 bool empty(dictionary *dict)
 {
     return dict->size == 0;
 }
 
-char **to_array(dictionary *dict)
-{
-    return NULL;
-}
-
+/*
+ * Prints dictionary in JSON (almost) format
+ */
 void print_dict(dictionary *dict)
 {
     printf("{\n");

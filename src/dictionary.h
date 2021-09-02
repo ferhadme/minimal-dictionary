@@ -30,8 +30,6 @@ char *get(dictionary *, const char *);
 
 bool delete(dictionary *, const char *);
 
-void clean_node_from_mem(node *);
-
 void clear(dictionary *);
 
 bool contains_key(dictionary *, const char *);
@@ -40,18 +38,23 @@ bool contains_value(dictionary *, const char *);
 
 char *get_or_default(dictionary *, const char *, const char *);
 
-char *replace_if_exists(dictionary *, const char *);
-
-bool replace(dictionary *, const char *, const char *);
+char *replace(dictionary *, const char *, const char *);
 
 bool empty(dictionary *);
-
-char **to_array(dictionary *);
 
 void print_dict(dictionary *);
 
 static node *find_node(dictionary *, const char *);
 
+static node *find_node_v(dictionary *, const char *);
+
+static void clean_node_from_mem(node *);
+
 static unsigned int hash(const char *);
+
+/* TODO */
+char **key_set(dictionary *);
+char **value_set(dictionary *);
+/* TODO */
 
 #endif
