@@ -30,7 +30,7 @@ char *get(dictionary *, const char *);
 
 bool delete(dictionary *, const char *);
 
-void clear(dictionary *);
+void clear_dict(dictionary *);
 
 void free_dict(dictionary *);
 

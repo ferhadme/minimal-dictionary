@@ -22,9 +22,13 @@ dictionary *create_dictionary()
     return dict;
 }
 
+/*
+ * free_dict() function should be called for not just to free dictionary itself but also its nodes
+ * In case of just calling free(dict), memory leaks would be happened for nodes of dictionary
+ */
 void free_dict(dictionary *dict)
 {
-    clear(dict);
+    clear_dict(dict);
     free(dict);
 }
 
@@ -143,7 +147,7 @@ static node *find_node_v(dictionary *dict, const char *value)
 }
 
 /*
- * Clean node related data from memory
+ * Cleans node related data from memory
  */
 static void clean_node_from_mem(node *n)
 {
@@ -155,7 +159,7 @@ static void clean_node_from_mem(node *n)
 /*
  * Deletes all data from dictionary and memory
  */
-void clear(dictionary *dict)
+void clear_dict(dictionary *dict)
 {
     for (int i = 0; i < BUCKET_SIZE; i++) {
         node *head = dict->table[i];
@@ -230,7 +234,7 @@ void print_dict(dictionary *dict)
     for (int i = 0; i < BUCKET_SIZE; i++) {
         node *head = dict->table[i];
         while (head) {
-            printf("\t\"%s\": %s\n", head->key, head->data);
+            printf("\t\"%s\": %s,\n", head->key, head->data);
             head = head->next;
         }
     }
