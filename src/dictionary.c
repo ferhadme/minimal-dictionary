@@ -226,6 +226,59 @@ bool empty(dictionary *dict)
 }
 
 /*
+ * Returns set of keys available in dictionary
+ * NOTE: After finishing work with key set, memory should be cleaned with free_set() function or manually
+ */
+char **key_set(dictionary *dict)
+{
+    char **key_s = malloc(dict->size * sizeof(char *));
+    unsigned int key_s_index = 0;
+    for (int i = 0; i < BUCKET_SIZE; i++) {
+        node *head = dict->table[i];
+        while (head) {
+            key_s[key_s_index] = malloc(strlen(head->key) + 1);
+            strcpy(key_s[key_s_index], head->key);
+            head = head->next;
+            key_s_index++;
+        }
+    }
+
+    return key_s;
+}
+
+/*
+ * Returns set of values available in dictionary
+ * NOTE: After finishing work with value set, memory should be cleaned with free_set() function or manually
+ */
+char **value_set(dictionary *dict)
+{
+    char **value_s = malloc(dict->size * sizeof(char *));
+    unsigned int value_s_index = 0;
+    for (int i = 0; i < BUCKET_SIZE; i++) {
+        node *head = dict->table[i];
+        while (head) {
+            value_s[value_s_index] = malloc(strlen(head->data) + 1);
+            strcpy(value_s[value_s_index], head->data);
+            head = head->next;
+            value_s_index++;
+        }
+    }
+
+    return value_s;
+}
+
+/*
+ * Frees memory that set allocates
+ */
+void free_set(char **s, unsigned int SIZE)
+{
+    for (int i = 0; i < SIZE; i++) {
+        free(s[i]);
+    }
+    free(s);
+}
+
+/*
  * Prints dictionary in JSON (almost) format
  */
 void print_dict(dictionary *dict)

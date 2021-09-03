@@ -12,6 +12,14 @@ int main(void)
     put(dict, "Austria", "Vienna");
     put(dict, "Azerbaijan", "Baki");
 
+    char **key_s = key_set(dict);
+    char **value_s = value_set(dict);
+    for (int i = 0; i < dict->size; i++) {
+        printf("KEY%i -> %s : VALUE%i -> %s\n", i, key_s[i], i, value_s[i]);
+    }
+    free_set(key_s, dict->size);
+    free_set(value_s, dict->size);
+
     print_dict(dict);
     /* printf("%u\n", dict->size); */
 

@@ -54,9 +54,10 @@ static void clean_node_from_mem(node *);
 
 static unsigned int hash(const char *);
 
-/* TODO */
 char **key_set(dictionary *);
+
+void free_set(char **, unsigned int);
+
 char **value_set(dictionary *);
-/* TODO */
 
 #endif
