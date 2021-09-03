@@ -234,7 +234,7 @@ void print_dict(dictionary *dict)
     for (int i = 0; i < BUCKET_SIZE; i++) {
         node *head = dict->table[i];
         while (head) {
-            printf("\t\"%s\": %s,\n", head->key, head->data);
+            printf("\t\"%s\": \"%s\",\n", head->key, head->data);
             head = head->next;
         }
     }
