@@ -22,6 +22,12 @@ dictionary *create_dictionary()
     return dict;
 }
 
+void free_dict(dictionary *dict)
+{
+    clear(dict);
+    free(dict);
+}
+
 /*
  * Puts value with specified key into dictionary
  * Key duplications are ignored
@@ -39,8 +45,10 @@ bool put(dictionary *dict, const char *key, const char *data)
         return false;
     new_node->key = malloc(strlen(key) + 1);
     new_node->data = malloc(strlen(data) + 1);
-    if (!new_node->key || !new_node->data)
+    if (!new_node->key || !new_node->data) {
+        free(new_node);
         return false;
+    }
 
     strcpy(new_node->key, key);
     strcpy(new_node->data, data);
@@ -88,13 +96,12 @@ bool delete(dictionary *dict, const char *key)
     // ... - target - ...
     // ... - target
     walker = target->next;
-    if (prev) {
-        clean_node_from_mem(target);
+    clean_node_from_mem(target);
+    if (prev)
         prev->next = walker;
-    } else {
-        clean_node_from_mem(target);
+    else
         dict->table[index] = walker;
-    }
+    
     dict->size--;
     
     return true;
@@ -155,9 +162,7 @@ void clear(dictionary *dict)
         while (head) {
             node *tmp = head;
             head = head->next;
-            free(tmp->key);
-            free(tmp->data);
-            free(tmp);
+            clean_node_from_mem(tmp);
         }
         dict->table[i] = NULL;
     }

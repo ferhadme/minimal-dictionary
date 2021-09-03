@@ -25,8 +25,9 @@ int main(void)
     put(dict, "Italy", "Rome");
     print_dict(dict);
 
+    
     printf("%s\n", get(dict, "Russia"));
-
+    
     printf("%i\n", contains_key(dict, "Italy"));
     printf("%i\n", contains_value(dict, "Rome"));
 
@@ -42,7 +43,7 @@ int main(void)
     replace(dict, "Portugal", "Lisbon_new");
     printf("%s\n", get(dict, "Portugal"));
 
-    free(dict);
+    free_dict(dict);
     return 0;
 }
 

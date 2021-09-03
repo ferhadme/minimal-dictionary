@@ -32,6 +32,8 @@ bool delete(dictionary *, const char *);
 
 void clear(dictionary *);
 
+void free_dict(dictionary *);
+
 bool contains_key(dictionary *, const char *);
 
 bool contains_value(dictionary *, const char *);
