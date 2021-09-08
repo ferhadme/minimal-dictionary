@@ -205,7 +205,7 @@ char *get_or_default(dictionary *dict, const char *key, const char *default_val)
  * Sets or replaces old value (paired with key) with new value
  * Returns old value if key is available, otherwise NULL
  */
-char* replace(dictionary *dict, const char *key, const char *new_value)
+char *replace(dictionary *dict, const char *key, const char *new_value)
 {
     node *n = find_node(dict, key);
     if (!n)
@@ -272,9 +272,8 @@ char **value_set(dictionary *dict)
  */
 void free_set(char **s, unsigned int SIZE)
 {
-    for (int i = 0; i < SIZE; i++) {
+    for (int i = 0; i < SIZE; i++)
         free(s[i]);
-    }
     free(s);
 }
 

@@ -40,3 +40,4 @@
 - print_dict
 - key_set
 - value_set
+- free_set
