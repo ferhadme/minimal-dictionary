@@ -5,6 +5,11 @@
 
 #include "dictionary.h"
 
+static node *find_node(dictionary *, const char *);
+static node *find_node_v(dictionary *, const char *);
+static void clean_node_from_mem(node *);
+static unsigned int hash(const char *);
+
 /*
  * Creates new dictionary
  * Can return NULL in case of memory allocation problem
