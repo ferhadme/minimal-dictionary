@@ -19,7 +19,7 @@ dictionary *create_dictionary()
     dictionary *dict = malloc(sizeof(dictionary));
     if (!dict)
         return NULL;
-    
+
     for (int i = 0; i < BUCKET_SIZE; i++)
         dict->table[i] = NULL;
     
@@ -44,8 +44,9 @@ void free_dict(dictionary *dict)
  */
 bool put(dictionary *dict, const char *key, const char *data)
 {
-    if (contains_key(dict, key))
-        return true;
+    if (contains_key(dict, key)) {
+        replace(dict, key, data);
+    }
     unsigned int index = hash(key);
     node *head = dict->table[index];
 
