@@ -17,12 +17,14 @@ static unsigned int hash(const char *);
 dictionary *create_dictionary()
 {
     dictionary *dict = malloc(sizeof(dictionary));
-    if (!dict)
+    if (!dict) {
         return NULL;
+    }
 
-    for (int i = 0; i < BUCKET_SIZE; i++)
+    for (int i = 0; i < BUCKET_SIZE; i++) {
         dict->table[i] = NULL;
-    
+    }
+
     dict->size = 0;
     return dict;
 }
@@ -51,8 +53,9 @@ bool put(dictionary *dict, const char *key, const char *data)
     node *head = dict->table[index];
 
     node *new_node = malloc(sizeof(node));
-    if (!new_node)
+    if (!new_node) {
         return false;
+    }
     new_node->key = malloc(strlen(key) + 1);
     new_node->data = malloc(strlen(data) + 1);
     if (!new_node->key || !new_node->data) {
@@ -99,21 +102,24 @@ bool delete(dictionary *dict, const char *key)
         walker = walker->next;
     }
 
-    if (!target)
+    if (!target) {
         return false;
-    
+    }
+
     // target - ...
     // ... - target - ...
     // ... - target
     walker = target->next;
     clean_node_from_mem(target);
-    if (prev)
+    if (prev) {
         prev->next = walker;
-    else
+    }
+    else {
         dict->table[index] = walker;
-    
+    }
+
     dict->size--;
-    
+
     return true;
 }
 
@@ -126,11 +132,12 @@ static node *find_node(dictionary *dict, const char *key)
     node *head = dict->table[index];
 
     while (head) {
-        if (strcmp(head->key, key) == 0)
+        if (strcmp(head->key, key) == 0) {
             return head;
+	}
         head = head->next;
     }
-    
+
     return head;
 }
 
@@ -139,12 +146,13 @@ static node *find_node(dictionary *dict, const char *key)
  */
 static node *find_node_v(dictionary *dict, const char *value)
 {
-    
+
     for (int i = 0; i < BUCKET_SIZE; i++) {
         node *head = dict->table[i];
         while (head) {
-            if (strcmp(head->data, value) == 0)
+            if (strcmp(head->data, value) == 0) {
                 return head;
+	    }
             head = head->next;
         }
     }
@@ -207,19 +215,20 @@ char *get_or_default(dictionary *dict, const char *key, const char *default_val)
     return !data ? (char *) default_val : data;
 }
 
-/* 
+/*
  * Sets or replaces old value (paired with key) with new value
  * Returns old value if key is available, otherwise NULL
  */
 char *replace(dictionary *dict, const char *key, const char *new_value)
 {
     node *n = find_node(dict, key);
-    if (!n)
+    if (!n) {
         return NULL;
-    
+    }
+
     n->data = realloc(n->data, strlen(new_value) + 1);
     strcpy(n->data, new_value);
-    
+
     return n->key;
 }
 
@@ -278,8 +287,9 @@ char **value_set(dictionary *dict)
  */
 void free_set(char **s, unsigned int SIZE)
 {
-    for (int i = 0; i < SIZE; i++)
+    for (int i = 0; i < SIZE; i++) {
         free(s[i]);
+    }
     free(s);
 }
 
@@ -308,8 +318,9 @@ static unsigned int hash(const char *key)
     unsigned int hash = 5381;
     int c;
 
-    while ((c = *key++))
+    while ((c = *key++)) {
         hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+    }
 
     return hash % BUCKET_SIZE;
 }
